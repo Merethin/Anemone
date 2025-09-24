@@ -148,6 +148,16 @@ export async function joinFaction(script: NSScript, fid: number): Promise<void> 
         script.statusBubble.warn(
             "Arms Control Treaty in effect"
         );
+    } else if (page.includes(
+        `Very new nations are not permitted to join a Faction.`
+    )) {
+        script.statusBubble.warn(
+            "Nation too young to join faction"
+        );
+    } else if (page.includes(`You must leave`)) {
+        script.statusBubble.warn(
+            "Nation already in a faction"
+        );
     } else {
         script.statusBubble.success(
             `Joined faction ${fid}`
