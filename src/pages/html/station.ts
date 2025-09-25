@@ -3,9 +3,15 @@ export const nukeStationHtml = `
 <p id="puppet-status">0 Puppets Saved, 0 Alive / 0 Loaded (run Classify to load)</p>
 <fieldset>
   <legend>Join Faction</legend>
-  <div class="frdata"><p>Join a faction with all your puppets.</p></div>
+  <div class="frdata"><p>Join a faction with all your puppets, leaving any previous faction they may be in.</p></div>
   <input type="text" id="mass-join-fid" placeholder="Enter Faction ID..."></input>
   <button id="mass-join-faction" class="button primary">Join Faction</button>
+</fieldset>
+<fieldset>
+  <legend>Leave Faction</legend>
+  <div class="frdata"><p>Leave from a faction with all your non-targeted puppets. Do this if logging off for the night.</p></div>
+  <input type="text" id="mass-leave-fid" placeholder="Enter Faction ID..."></input>
+  <button id="mass-leave-faction" class="button primary">Leave Faction</button>
 </fieldset>
 <fieldset>
   <legend>Classify Puppets</legend>

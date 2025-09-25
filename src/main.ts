@@ -15,6 +15,7 @@ import { setupJoinFactionPage } from './pages/joinfaction';
 import { setupDonatePage } from './pages/donate';
 import { setupTargetPage } from './pages/target';
 import { setupCleanupPage } from './pages/cleanup';
+import { setupLeaveFactionPage } from './pages/leavefaction';
 
 const SCRIPT_NAME = "Anemone";
 const AUTHOR = "Merethin";
@@ -34,6 +35,8 @@ const AUTHOR = "Merethin";
         action = setupProdPage();
     } else if (checkPage("page=blank/nuke/joinfaction")) {
         action = setupJoinFactionPage();
+    } else if (checkPage("page=blank/nuke/leavefaction")) {
+        action = setupLeaveFactionPage();
     } else if (checkPage("page=blank/nuke/donate")) {
         action = setupDonatePage();
     } else if (checkPage("page=blank/nuke/target")) {

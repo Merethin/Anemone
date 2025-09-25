@@ -146,7 +146,13 @@ export async function donateToShieldBank(script: NSScript, amount: number): Prom
     saveNukeStats(stats);
 }
 
-export async function joinFaction(script: NSScript, fid: number): Promise<void> {
+function extractFactionIDFromURL(url: string) {
+    let regexResult = /page=faction\/fid=([0-9]+)/.exec(url);
+    if (regexResult == null) return undefined;
+    return regexResult[1];
+}
+
+export async function joinFaction(script: NSScript, fid: number): Promise<number> {
     let page = await script.getNsHtmlPage(
         `page=faction/fid=${fid}`, {
             consider_join_faction: `1`,
@@ -170,9 +176,38 @@ export async function joinFaction(script: NSScript, fid: number): Promise<void> 
         script.statusBubble.warn(
             "Nation already in a faction"
         );
+
+        const parser = new DOMParser();
+        var doc = parser.parseFromString(page, "text/html");
+
+        let linkElement = doc.querySelector("p.error")?.querySelector("a");
+        return parseInt(extractFactionIDFromURL(linkElement?.href as string) || "-1");
     } else {
         script.statusBubble.success(
             `Joined faction ${fid}`
+        );
+    }
+
+    return -1;
+}
+
+export async function leaveFaction(script: NSScript, fid: number): Promise<void> {
+    let page = await script.getNsHtmlPage(
+        `page=faction/fid=${fid}`, {
+            consider_leave_faction: `1`,
+            leave_faction: `1`,
+        }
+    );
+
+    if(page.includes(
+        "N-Day has now finished.")
+    ) {
+        script.statusBubble.warn(
+            "Arms Control Treaty in effect"
+        );
+    } else {
+        script.statusBubble.success(
+            `Left faction ${fid}`
         );
     }
 }

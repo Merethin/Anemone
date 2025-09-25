@@ -2,10 +2,10 @@ import { getButtonElement, getElement, setText } from '../htmllib';
 import Mousetrap from 'mousetrap';
 import { keybinds, loadKeybind } from '../keybinds';
 import { NSScript, prettify } from '../../nsdotjs/src/nsdotjs';
-import { joinFactionHtml } from './html/joinfaction';
+import { leaveFactionHtml } from './html/leavefaction';
 import { checkPageRegex } from '../lib';
 import { readConfigRecord } from '../config';
-import { joinFaction, leaveFaction } from '../endpoints';
+import { leaveFaction } from '../endpoints';
 
 let targetFid = parseInt(checkPageRegex(/fid=([0-9]+)/) || "0");
 
@@ -14,16 +14,14 @@ const puppetCount = Object.keys(puppets).length;
 
 let index = 0;
 let currentNation = "";
-let fidToLeave = 0;
 
-enum JoinAction {
+enum LeaveAction {
     Login,
-    Join,
     Leave,
     Finish,
 }
 
-let joinState = JoinAction.Login;
+let leaveState = LeaveAction.Login;
 
 function updateProgress() {
     setText("progress", `Progress: ${index}/${puppetCount}`);
@@ -31,10 +29,10 @@ function updateProgress() {
     if(index >= Object.keys(puppets).length) setText("action", `Done`);
 }
 
-export function setupJoinFactionPage() {
+export function setupLeaveFactionPage() {
     // Insert main HTML
     let container = document.createElement("div");
-    container.innerHTML = joinFactionHtml;
+    container.innerHTML = leaveFactionHtml;
     getElement("content").appendChild(container);
 
     updateProgress();
@@ -43,16 +41,16 @@ export function setupJoinFactionPage() {
         Mousetrap.trigger(loadKeybind(keybinds.action));
     };
 
-    return joinfaction;
+    return leavefaction;
 }
 
-export async function joinfaction(script: NSScript) {
-    switch(joinState) {
-        case JoinAction.Login: {
+export async function leavefaction(script: NSScript) {
+    switch(leaveState) {
+        case LeaveAction.Login: {
             if(index >= puppetCount){
                 index = puppetCount;
                 updateProgress();
-                joinState = JoinAction.Finish;
+                leaveState = LeaveAction.Finish;
                 setText("action", "Done");
                 return;
             }
@@ -65,32 +63,19 @@ export async function joinfaction(script: NSScript) {
 
             index += 1;
 
-            joinState = JoinAction.Join;
+            leaveState = LeaveAction.Leave;
             currentNation = nation;
             setText("nation", `Current nation: ${prettify(currentNation)}`);
-            setText("action", `Join Faction ${targetFid} on ${prettify(currentNation)}`);
+            setText("action", `Leave Faction ${targetFid} on ${prettify(currentNation)}`);
             return;
         }
-        case JoinAction.Join: {
-            let currentFid = await joinFaction(script, targetFid);
-            if(currentFid !== -1) {
-                fidToLeave = currentFid;
-                joinState = JoinAction.Leave;
-                setText("action", `Leave Faction ${currentFid} on ${prettify(currentNation)}`);
-                return;
-            }
+        case LeaveAction.Leave: {
+            await leaveFaction(script, targetFid);
 
-            joinState = JoinAction.Login;
+            leaveState = LeaveAction.Login;
             setText("action", `Login to Next Nation`);
             return;
         }
-        case JoinAction.Leave: {
-            await leaveFaction(script, fidToLeave);
-
-            joinState = JoinAction.Join;
-            setText("action", `Join Faction ${targetFid} on ${prettify(currentNation)}`);
-            return;
-        }
-        case JoinAction.Finish: return;
+        case LeaveAction.Finish: return;
     }
 }

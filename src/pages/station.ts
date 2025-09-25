@@ -14,6 +14,12 @@ export function setupNukeStationPage() {
         window.location.href = `https://${window.location.host}/page=blank/nuke/joinfaction/fid=${fid}`;
     };
 
+    getButtonElement("mass-leave-faction").onclick = () => {
+        const fid = getInputElement("mass-leave-fid").value;
+
+        window.location.href = `https://${window.location.host}/page=blank/nuke/leavefaction/fid=${fid}`;
+    };
+
     const checkboxes = {
         "C": "prod-select-clean",
         "M": "prod-select-mil",
