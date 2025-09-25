@@ -16,6 +16,12 @@ export async function convertProductionToNukes(script: NSScript, amount: number)
         script.statusBubble.warn(
             "Arms Control Treaty in effect"
         );
+    } else if(page.includes(
+        "Production cannot be generated nor spent."
+    )) {
+        script.statusBubble.warn(
+            "N-Day has not started yet"
+        );
     } else {
         script.statusBubble.success(
             `Created ${amount} nukes`
@@ -41,6 +47,12 @@ export async function convertProductionToShields(script: NSScript, amount: numbe
     ) {
         script.statusBubble.warn(
             "Arms Control Treaty in effect"
+        );
+    } else if(page.includes(
+        "Production cannot be generated nor spent."
+    )) {
+        script.statusBubble.warn(
+            "N-Day has not started yet"
         );
     } else {
         script.statusBubble.success(
