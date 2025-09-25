@@ -80,7 +80,7 @@ export function estimateProduction(stats: NukeStats, isWa: boolean): number {
     let productionRate = isWa ? 150 : 15;
 
     const productionDecay = (stats.radiation / 100) * RADIATION_PENALTY; // converting percentage to 0-1 range
-    productionRate *= productionDecay;
+    productionRate *= (1 - productionDecay);
 
     let estimatedProd = stats.production + (productionRate * guaranteedTicks);
     if(remainder > (PRODUCTION_TICK_INTERVAL / 2)) 
