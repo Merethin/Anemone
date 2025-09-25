@@ -1,6 +1,6 @@
 {
   "name": "anemone",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "N-Day userscript for JEFF",
   "main": "src/main.ts",
   "scripts": {
