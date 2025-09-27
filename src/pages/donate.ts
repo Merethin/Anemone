@@ -1,5 +1,5 @@
 import { getButtonElement, getElement, setText } from '../htmllib';
-import { fetchNukeStats, readNukeStatsPuppets } from '../nukepage';
+import { fetchNukeStats, readNukeStatsPuppets, updateNukeStats } from '../nukepage';
 import Mousetrap from 'mousetrap';
 import { keybinds, loadKeybind } from '../keybinds';
 import { NSScript, prettify } from '../../nsdotjs/src/nsdotjs';
@@ -23,6 +23,7 @@ console.log(puppetStats);
 let index = 0;
 let currentNation = "";
 let shieldAmount = 0;
+let remainingShields = 0;
 
 enum DonateAction {
     Login,
@@ -82,6 +83,7 @@ export async function donate(script: NSScript) {
         case DonateAction.Query: {
             let newStats = await fetchNukeStats(script, currentNation);
             shieldAmount = Math.floor(newStats.shields * ratio);
+            remainingShields = newStats.shields - shieldAmount;
 
             if(newStats.isDestroyed || shieldAmount == 0) {
                 donateState = DonateAction.Login;
@@ -95,6 +97,10 @@ export async function donate(script: NSScript) {
         }
         case DonateAction.Donate: {
             await donateToShieldBank(script, shieldAmount);
+
+            updateNukeStats(currentNation, {
+                shields: remainingShields, 
+            });
 
             donateState = DonateAction.Login;
             setText("action", `Login to Next Nation`);

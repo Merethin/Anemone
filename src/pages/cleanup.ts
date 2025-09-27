@@ -1,5 +1,5 @@
 import { getButtonElement, getElement, getInputElement, setText } from '../htmllib';
-import { estimateProduction, fetchNukeStats, readNukeStatsPuppets } from '../nukepage';
+import { estimateProduction, fetchNukeStats, readNukeStatsPuppets, updateNukeStats } from '../nukepage';
 import Mousetrap from 'mousetrap';
 import { keybinds, loadKeybind } from '../keybinds';
 import { canonicalize, NSScript, prettify } from '../../nsdotjs/src/nsdotjs';
@@ -192,6 +192,10 @@ export async function cleanup(script: NSScript) {
             updateProgress();
 
             prodAmount -= CLEANUP_COST;
+
+            updateNukeStats(currentNation, {
+                production: prodAmount, 
+            });
 
             if(prodAmount < CLEANUP_COST) {
                 cleanupState = CleanAction.Login;

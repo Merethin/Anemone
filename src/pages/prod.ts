@@ -1,5 +1,5 @@
 import { getButtonElement, getElement, setText } from '../htmllib';
-import { estimateProduction, fetchNukeStats, readNukeStatsPuppets, resourceCost } from '../nukepage';
+import { estimateProduction, fetchNukeStats, readNukeStatsPuppets, resourceCost, updateNukeStats } from '../nukepage';
 import Mousetrap from 'mousetrap';
 import { keybinds, loadKeybind } from '../keybinds';
 import { NSScript, prettify } from '../../nsdotjs/src/nsdotjs';
@@ -25,6 +25,7 @@ const puppetStats = Object.entries(readNukeStatsPuppets()).filter(([_, stats]) =
 let index = 0;
 let currentNation = "";
 let resourceAmount = 0;
+let remainder = 0;
 
 enum ProdAction {
     Login,
@@ -90,6 +91,7 @@ export async function prod(script: NSScript) {
             } else {
                 prodState = ProdAction.Produce;
                 resourceAmount = Math.floor(newStats.production / resourceCost(resource, newStats));
+                remainder = newStats.production % resourceCost(resource, newStats);
                 setText("action", `Build ${resourceAmount} ${resource}s on ${prettify(currentNation)}`);
             }
 
@@ -101,6 +103,10 @@ export async function prod(script: NSScript) {
             } else {
                 await convertProductionToShields(script, resourceAmount);
             }
+
+            updateNukeStats(currentNation, {
+                production: remainder, 
+            });
 
             prodState = ProdAction.Login;
             setText("action", `Login to Next Nation`);

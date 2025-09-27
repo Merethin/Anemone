@@ -133,6 +133,14 @@ export function readNukeStats(nationId: string): NukeStats | null {
     return JSON.parse(json) as NukeStats;
 }
 
+export function updateNukeStats(nationId: string, payload: Record<string, number>) {
+    let stats = readNukeStats(nationId);
+    if(stats === null) return;
+
+    Object.assign(stats, payload);
+    saveNukeStats(stats);
+}
+
 export function readNukeStatsAll(): Record<string, NukeStats> {
     let result: Record<string, NukeStats> = {};
     let keys = GM_listValues();

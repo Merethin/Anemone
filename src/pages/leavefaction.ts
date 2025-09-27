@@ -6,6 +6,7 @@ import { leaveFactionHtml } from './html/leavefaction';
 import { checkPageRegex } from '../lib';
 import { readConfigRecord } from '../config';
 import { leaveFaction } from '../endpoints';
+import { updateNukeStats } from '../nukepage';
 
 let targetFid = parseInt(checkPageRegex(/fid=([0-9]+)/) || "0");
 
@@ -71,6 +72,10 @@ export async function leavefaction(script: NSScript) {
         }
         case LeaveAction.Leave: {
             await leaveFaction(script, targetFid);
+
+            updateNukeStats(currentNation, {
+                production: 0,
+            });
 
             leaveState = LeaveAction.Login;
             setText("action", `Login to Next Nation`);

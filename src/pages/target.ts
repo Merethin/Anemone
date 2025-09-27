@@ -1,5 +1,5 @@
 import { getButtonElement, getElement, getInputElement, setText } from '../htmllib';
-import { fetchNukeStats, readNukeStatsPuppets } from '../nukepage';
+import { fetchNukeStats, readNukeStatsPuppets, updateNukeStats } from '../nukepage';
 import Mousetrap from 'mousetrap';
 import { keybinds, loadKeybind } from '../keybinds';
 import { canonicalize, NSScript, prettify } from '../../nsdotjs/src/nsdotjs';
@@ -223,6 +223,10 @@ export async function target(script: NSScript) {
             updateProgress();
 
             nukeAmount -= targetNukeAmount;
+
+            updateNukeStats(currentNation, {
+                nukes: nukeAmount, 
+            });
 
             if(nukeAmount <= 0) {
                 targetState = TargetAction.Login;
