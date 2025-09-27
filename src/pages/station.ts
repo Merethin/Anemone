@@ -1,6 +1,24 @@
 import { nukeStationHtml } from './html/station';
 import { getButtonElement, getElement, getInputElement, setText } from '../htmllib';
-import { estimateCleanupCount, estimatePossibleNukes, estimatePossibleShields, estimateProduction, readNukeStatsPuppets, readPuppets } from '../nukepage';
+import { estimateCleanupCount, estimatePossibleNukes, estimatePossibleShields, estimateProduction, readNukeStats, readNukeStatsPuppets, readPuppets } from '../nukepage';
+import { currentWA } from '../wa';
+import { prettify } from '../../nsdotjs/src/helpers';
+
+export function updateWAStatus() {
+    let wa = currentWA();
+    if(wa === null) {
+        setText("wa-status", `Current World Assembly nation: none`);
+        return;
+    }
+
+    let stats = readNukeStats(wa);
+    if(stats == null) {
+        setText("wa-status", `Current World Assembly nation: ${wa} (unclassified)`);
+        return;
+    }
+
+    setText("wa-status", `Current World Assembly nation: ${prettify(wa)} (${stats.nukeType} Specialist)`);
+}
 
 export function setupNukeStationPage() {
     // Insert main HTML
@@ -19,6 +37,8 @@ export function setupNukeStationPage() {
 
         window.location.href = `https://${window.location.host}/page=blank/nuke/leavefaction/fid=${fid}`;
     };
+
+    updateWAStatus();
 
     const checkboxes = {
         "C": "prod-select-clean",
@@ -99,12 +119,12 @@ export function setupNukeStationPage() {
                 // fixme: check for WA
 
                 categoryTotals[stats.nukeType].count += 1;
-                categoryTotals[stats.nukeType].estimatedProd += estimateProduction(stats, false);
-                categoryTotals[stats.nukeType].estimatedNukes += estimatePossibleNukes(stats, false);
-                categoryTotals[stats.nukeType].estimatedShield += estimatePossibleShields(stats, false);
+                categoryTotals[stats.nukeType].estimatedProd += estimateProduction(stats);
+                categoryTotals[stats.nukeType].estimatedNukes += estimatePossibleNukes(stats);
+                categoryTotals[stats.nukeType].estimatedShield += estimatePossibleShields(stats);
 
                 if (stats.nukeType === "Cleanup") {
-                    categoryTotals[stats.nukeType].estimatedClean += estimateCleanupCount(stats, false);
+                    categoryTotals[stats.nukeType].estimatedClean += estimateCleanupCount(stats);
                 }
             }
         });

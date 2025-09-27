@@ -2,6 +2,7 @@
 
 import { NSScript, canonicalize, prettify } from "../nsdotjs/src/nsdotjs";
 import { readConfigRecord } from "./config";
+import { isWA } from "./wa";
 
 export type NukeStats = {
     nation: string,
@@ -69,8 +70,9 @@ function productionCap(stats: NukeStats, isWa: boolean): number {
 
 const RADIATION_PENALTY = 0.66; // new in N-Day13
 
-export function estimateProduction(stats: NukeStats, isWa: boolean): number {
+export function estimateProduction(stats: NukeStats): number {
     if(stats.isDestroyed) return 0;
+    let isWa = isWA(stats.nation);
 
     const timeSinceScrape = Date.now() - stats.scrapeTime;
 
@@ -99,15 +101,15 @@ export function resourceCost(resource: string, stats: NukeStats): number {
     }
 }
 
-export function estimatePossibleNukes(stats: NukeStats, isWa: boolean): number {
-    const prod = estimateProduction(stats, isWa);
+export function estimatePossibleNukes(stats: NukeStats): number {
+    const prod = estimateProduction(stats);
     const cost = resourceCost("nuke", stats);
 
     return Math.floor(prod/cost);
 }
 
-export function estimatePossibleShields(stats: NukeStats, isWa: boolean): number {
-    const prod = estimateProduction(stats, isWa);
+export function estimatePossibleShields(stats: NukeStats): number {
+    const prod = estimateProduction(stats);
     const cost = resourceCost("shield", stats);
 
     return Math.floor(prod/cost);
@@ -115,8 +117,8 @@ export function estimatePossibleShields(stats: NukeStats, isWa: boolean): number
 
 const CLEANUP_COST = 700; // new in N-Day13
 
-export function estimateCleanupCount(stats: NukeStats, isWa: boolean): number {
-    const prod = estimateProduction(stats, isWa);
+export function estimateCleanupCount(stats: NukeStats): number {
+    const prod = estimateProduction(stats);
 
     return Math.floor(prod/CLEANUP_COST);
 }

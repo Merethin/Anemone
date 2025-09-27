@@ -19,6 +19,12 @@ export const nukeStationHtml = `
   <a class="button primary" href="/page=blank/nuke/classify">Classify Puppets</a>
 </fieldset>
 <fieldset>
+  <legend>WA Nation</legend>
+  <div class="frdata"><p>Your WA nation generates production 10x faster and has a higher cap.</p></div>
+  <p id="wa-status">Current World Assembly nation: none</p>
+  <b>Press W to find and update your WA</b>
+</fieldset>
+<fieldset>
   <legend>Convert Production</legend>
   <div class="frdata"><p>Select the nations to convert production on.</p></div>
   <input type="checkbox" id="prod-select-mil"></input> Military Specialists<br>

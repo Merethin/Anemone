@@ -15,7 +15,7 @@ const puppets = readConfigRecord("puppets");
 const puppetStats = Object.entries(readNukeStatsPuppets()).filter(([_, stats]) => {
     if(stats.isDestroyed) return false;
     return stats.nukeType == "Cleanup";
-}).map(value => ({value, sort: estimateProduction(value[1], false) + generateRandomNumber(-150, 150)})).sort(
+}).map(value => ({value, sort: estimateProduction(value[1]) + generateRandomNumber(-150, 150)})).sort(
     (a, b) => b.sort - a.sort
 ).map(({ value }) => value);
 

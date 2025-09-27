@@ -7,7 +7,7 @@ import { keybinds, loadKeybind } from './keybinds';
 import { checkPage } from './lib';
 import { injectUserAgentWarning } from './htmllib';
 import { VERSION } from '../build/version';
-import { setupNukeStationPage } from './pages/station';
+import { setupNukeStationPage, updateWAStatus } from './pages/station';
 import { setupConfigPage } from './pages/config';
 import { setupClassifyPage } from './pages/classify';
 import { setupProdPage } from './pages/prod';
@@ -16,6 +16,7 @@ import { setupDonatePage } from './pages/donate';
 import { setupTargetPage } from './pages/target';
 import { setupCleanupPage } from './pages/cleanup';
 import { setupLeaveFactionPage } from './pages/leavefaction';
+import { queryWA } from './wa';
 
 const SCRIPT_NAME = "Anemone";
 const AUTHOR = "Merethin";
@@ -58,12 +59,22 @@ const AUTHOR = "Merethin";
             if(script.isHtmlRequestInProgress) return;
                 
             window.location.href = `https://${window.location.host}/page=blank/nuke/station`;
-        });
+        }, 'keyup');
 
         Mousetrap.bind(loadKeybind(keybinds.action), (_) => {
             if(script.isHtmlRequestInProgress) return;
                 
             if(action !== undefined) action(script);
-        });
+        }, 'keyup');
+
+        Mousetrap.bind('w', (_) => {
+            let f = async () => {
+                if (checkPage("page=blank/nuke/station")) {
+                    await queryWA(script);
+                    updateWAStatus();
+                }
+            }
+            f();
+        }, 'keyup');
     }
 })();
